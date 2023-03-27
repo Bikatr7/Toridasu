@@ -6,13 +6,7 @@ from pytube.cli import on_progress
 
 os.system("title " + "SYVD")
 
-
 sleep(.2)
-
-try: 
-    gui.getWindowsWithTitle("SYVD")[0].minimize()
-except:
-    pass
 
 link = input("Please enter the link of the youtube video you wish to download\n")
 
