@@ -1,9 +1,10 @@
-SYVD.py
+**Toridasu**
+------------------------------------------------------------------
 
-Original Author: Seinu#7854
+Toridasu is a lightweight tool for downloading YouTube videos and playlists.
 
-install packages listed in requirements.txt
+Simply run the script and paste the URL of the video or playlist you want to download.
 
-That's all, I really don't like using youtube to mp4's so I use this.
+Make sure to install the required modules listed in requirements.txt.
 
-Any questions or bugs, please email Seinuve@gmail.com
+Any questions or bugs can be reported to me at [my email](mailto:Seinuve@gmail.com)
