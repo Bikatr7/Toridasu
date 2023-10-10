@@ -73,8 +73,8 @@ def download_video(url, destination):
 
         print("Downloaded: ", yt.title)
 
-    except:
-        print("Failed to download: ", url)
+    except Exception as e: 
+        print("Failed to download: ", url, "due to ", str(e))
 
 ##-------------------start-of-download_playlist()-----------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -94,7 +94,7 @@ def download_playlist(playlist_url):
 
     playlist = pytube.Playlist(playlist_url)
     clear_console()
-    playlist_folder = create_playlist_folder(playlist.title())
+    playlist_folder = create_playlist_folder("Download Playlist")
     
     for video_url in playlist.video_urls:
         download_video(video_url, playlist_folder)
@@ -140,5 +140,8 @@ try:
         download_playlist(link)
     else:
         download_single_video(link)
-except:
-    print("\nVideo or Playlist is Invalid or Unavailable\n")
+
+except Exception as e:
+    print("\nVideo or Playlist is Invalid or Unavailable\n\n" + str(e))
+
+os.system('pause')
