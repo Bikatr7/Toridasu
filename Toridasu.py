@@ -136,12 +136,19 @@ link = input("Please enter the link of the YouTube video or playlist you wish to
 
 try:
 
+    assert link != "q"
+
     if("playlist?list=" in link):
         download_playlist(link)
     else:
         download_single_video(link)
 
+except AssertionError:
+    exit()
+
 except Exception as e:
     print("\nVideo or Playlist is Invalid or Unavailable\n\n" + str(e))
+
+
 
 os.system('pause')
