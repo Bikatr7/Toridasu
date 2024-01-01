@@ -76,7 +76,7 @@ def download_video(url:str, destination:str, download_number:int) -> None:
         ## Check if file already exists
         if(not os.path.exists(os.path.join(destination, unique_filename))):
 
-            video.download(destination, filename=unique_filename)
+            video.download(destination, filename=unique_filename, skip_existing=False, max_retries=5)
             print(f"Downloaded ({download_number}): ", yt.title)
             total_downloads += 1
 
