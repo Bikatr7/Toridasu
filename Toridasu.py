@@ -1,42 +1,37 @@
-## built-in modules
 import os
 import time
-
-## third-party modules
 import pytube
 import pytube.cli
 
+# Global counters and list for tracking downloads
+total_downloads = 0
+failed_downloads = []
+
 ##-------------------start-of-clear_console()-----------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def clear_console():
+def clear_console() -> None:
 
     """
 
-    Clears the console screen\n
+    Clears the console screen.
 
-    Parameters:\n
-    None\n
-
-    Returns:\n
-    None\n
-    
     """
 
-    os.system('cls' if os.name == 'nt' else 'clear')
+    os.system('cls' if(os.name == 'nt') else 'clear')
 
 ##-------------------start-of-create_playlist_folder()-----------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def create_playlist_folder(playlist_title):
+def create_playlist_folder(playlist_title:str) -> str:
 
     """
-    
-    Creates a folder on the desktop with the playlist title\n
 
-    Parameters:\n
-    playlist_title (str): The title of the playlist\n
+    Creates a folder on the desktop with the playlist title.
 
-    Returns:\n
-    playlist_folder (str): The path of the playlist folder\n
+    Parameters:
+    playlist_title (str) : The title of the playlist.
+
+    Returns:
+    playlist_folder (str) : The path of the playlist folder.
 
     """
 
@@ -50,84 +45,104 @@ def create_playlist_folder(playlist_title):
 
 ##-------------------start-of-download_video()-----------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def download_video(url, destination):
+def download_video(url:str, destination:str, download_number:int) -> None:
 
     """
 
-    Downloads a video from a given url in a playlist\n
+    Downloads a video from a given url in a playlist.
 
-    Parameters:\n
-    url (str): The url of the video\n
-
-    Returns:\n
-    None\n
+    Parameters:
+    url (str) : The url of the video.
+    destination (str) : The destination folder for the video.
+    download_number (int) : The sequence number of the download.
 
     """
+
+    global total_downloads
 
     try:
 
         yt = pytube.YouTube(url, on_progress_callback=pytube.cli.on_progress)
+
         video = yt.streams.get_highest_resolution()
+
+        assert video is not None
 
         video.download(destination)
 
-        print("Downloaded: ", yt.title)
+        print(f"Downloaded ({download_number}): ", yt.title)
 
-    except Exception as e: 
+        total_downloads += 1
+
+    except Exception as e:
+
         print("Failed to download: ", url, "due to ", str(e))
+
+        failed_downloads.append(url)
 
 ##-------------------start-of-download_playlist()-----------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def download_playlist(playlist_url):
+def download_playlist(playlist_url:str) -> None:
 
     """
 
-    Downloads all videos in a playlist\n
+    Downloads all videos in a playlist.
 
-    Parameters:\n
-    playlist_url (str): The url of the playlist\n
-
-    Returns:\n
-    None\n
+    Parameters:
+    playlist_url (str) : The url of the playlist.
 
     """
 
     playlist = pytube.Playlist(playlist_url)
+
     clear_console()
-    playlist_folder = create_playlist_folder("Download Playlist")
-    
+
+    playlist_folder = create_playlist_folder(playlist.title)
+
+    download_number = 1
+
     for video_url in playlist.video_urls:
-        download_video(video_url, playlist_folder)
-    
-    print("\nAll videos have been downloaded successfully in the playlist folder!")
+        download_video(video_url, playlist_folder, download_number)
+        download_number += 1
+
+    print(f"\nTotal videos downloaded: {total_downloads}")
+
+    if(failed_downloads):
+        print(f"\nFailed downloads ({len(failed_downloads)}):")
+        for failed_url in failed_downloads:
+            print(failed_url)
 
 ##-------------------start-of-download_single_video()-----------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def download_single_video(video_url):
+def download_single_video(video_url:str) -> None:
 
     """
 
-    Downloads a single video not in a playlist\n
+    Downloads a single video not in a playlist.
 
-    Parameters:\n
-    video_url (str): The url of the video\n
+    Parameters:
+    video_url (str ): The url of the video.
 
-    Returns:\n
-    None\n
-
+    Returns:
+    None
     """
-
-    yt = pytube.YouTube(video_url, on_progress_callback=pytube.cli.on_progress)
 
     clear_console()
 
-    video = yt.streams.get_highest_resolution()
+    destination = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
 
-    video.download(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'))
+    download_video(video_url, destination, 1) ## download_number is 1 because it is a single video
 
-    print("Downloaded: ", yt.title)
+    print(f"\nTotal videos downloaded: {total_downloads}")
+
+    if(failed_downloads):
+        print(f"\nFailed downloads ({len(failed_downloads)}):")
+
+        for failed_url in failed_downloads:
+            print(failed_url)
 
 ##-------------------start-of-main()-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
 os.system("title " + "Toridasu")
 
 time.sleep(.2)
@@ -138,17 +153,15 @@ try:
 
     assert link != "q"
 
-    if("playlist?list=" in link):
+    if("playlist?list=") in link:
         download_playlist(link)
     else:
         download_single_video(link)
 
 except AssertionError:
     exit()
-
+    
 except Exception as e:
     print("\nVideo or Playlist is Invalid or Unavailable\n\n" + str(e))
-
-
 
 os.system('pause')
