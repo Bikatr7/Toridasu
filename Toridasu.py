@@ -1,3 +1,4 @@
+import datetime
 import os
 import time
 import pytube
@@ -63,21 +64,27 @@ def download_video(url:str, destination:str, download_number:int) -> None:
     try:
 
         yt = pytube.YouTube(url, on_progress_callback=pytube.cli.on_progress)
-
         video = yt.streams.get_highest_resolution()
 
-        assert video is not None
+        assert video != None
 
-        video.download(destination)
+        ## Generate a unique filename to avoid overwriting
+        base_filename = video.default_filename.rsplit('.', 1)[0]
+        file_extension = video.default_filename.rsplit('.', 1)[1]
+        unique_filename = f"{base_filename}_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.{file_extension}"
+        
+        ## Check if file already exists
+        if(not os.path.exists(os.path.join(destination, unique_filename))):
 
-        print(f"Downloaded ({download_number}): ", yt.title)
+            video.download(destination, filename=unique_filename)
+            print(f"Downloaded ({download_number}): ", yt.title)
+            total_downloads += 1
 
-        total_downloads += 1
+        else:
+            print(f"File already exists, skipping ({download_number}): ", yt.title)
 
     except Exception as e:
-
         print("Failed to download: ", url, "due to ", str(e))
-
         failed_downloads.append(url)
 
 ##-------------------start-of-download_playlist()-----------------------------------------------------------------------------------------------------------------------------------------------------------
