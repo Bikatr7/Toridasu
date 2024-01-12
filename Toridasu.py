@@ -81,7 +81,7 @@ def download_video(url:str, destination:str, download_number:int) -> None:
             total_downloads += 1
 
         else:
-            print(f"File already exists, skipping ({download_number}): ", yt.title)
+            print(f"File already exists, skipping ({download_number}) : ", yt.title)
 
     except Exception as e:
         print("Failed to download: ", url, "due to ", str(e))
