@@ -7,4 +7,4 @@ Simply run the script and paste the URL of the video or playlist you want to dow
 
 Make sure to install the required modules listed in requirements.txt.
 
-Any questions or bugs can be reported to me at [my email](mailto:Tetralon07@gmail.com)
+Any questions or bugs can be reported to me at [my email](mailto:Bikatr7@proton.me)
